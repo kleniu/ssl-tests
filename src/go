@@ -1,0 +1,8 @@
+echo "compile ..."
+cc -v -L/usr/local/opt/openssl/lib -I/usr/local/opt/openssl/include -o server server.c -lssl -lcrypto
+
+echo "keys ..."
+openssl req -x509 -newkey rsa:2048 -keyout server-key.pem -out server-cert.pem -days 9999 -batch -nodes -subj "/CN=server self signed certificate"
+
+echo "./server &"
+echo "openssl s_client -showcerts -connect localhost:4433 "

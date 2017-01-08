@@ -8,10 +8,11 @@ https://jamielinux.com/docs/openssl-certificate-authority/index.html
 - CRL  = Certificate Revocation List
 - CSR  = Certificate Signing Request
 - OCSP = Online Certificate Status Protocol 
+- PKCS = Public-Key Cryptography Standards
 
 # Procedure of making self signed certificate
 ```
-openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 9999 -batch
+openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 9999 -batch -nodes -subj "/CN=test self signed certificate"
 ```
 - req               - command for X.509 Certificate Signing Request (CSR) Management.
 - -x509             - output a x509 structure instead of a cert. req.
@@ -20,6 +21,8 @@ openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 9999 -bat
 - -out cert.pem     - output file
 - -days 9999
 - -batch            - do not ask anything during request generation
+- -nodes            - private key will not be encrypted
+- -subj             - supersedes the subject name when processing a request 
 
 # Decode cert.pem
 ```
@@ -43,11 +46,6 @@ For what dates is it valid?
 $ openssl x509 -in cert.pem -noout -dates
 ```
 
-The above, all at once
-```
-$ openssl x509 -in cert.pem -issuer -noout -subject -dates
-```
-
 What is its hash value?
 ```
 $ openssl x509 -in cert.pem -noout -hash
@@ -57,3 +55,8 @@ What is its MD5 fingerprint?
 ```
 $ openssl x509 -in cert.pem -noout -fingerprint
 ```
+
+## Other tests
+echo | openssl s_client -showcerts -servername encrypted.google.com -connect encrypted.google.com:443 2>/dev/null
+
+echo | openssl s_client -connect encrypted.google.com:443
