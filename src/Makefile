@@ -17,16 +17,9 @@ OUTPUT = client
 CCTLD = cctld.txt
 
 # Standard OpenSSL include directory
-# /usr/local/opt/openssl/include
-# OPENSSL_LOCAL = macosx-x64
-# OPENSSL_INCLUDE = -I/usr/local/ssl/$(OPENSSL_LOCAL)/include
-# OPENSSL_LIBDIR = /usr/local/ssl/$(OPENSSL_LOCAL)/lib
-# OPENSSL_LDFLAGS = -Bstatic $(OPENSSL_LIBDIR)/libssl.a $(OPENSSL_LIBDIR)/libcrypto.a
 OPENSSL_INCLUDE = -I/usr/local/opt/openssl/include
 OPENSSL_LIBDIR = /usr/local/opt/openssl/lib
 OPENSSL_LDFLAGS = -Bstatic $(OPENSSL_LIBDIR)/libssl.a $(OPENSSL_LIBDIR)/libcrypto.a
-
-
 
 # Merge our flags with user's flags
 override CPPFLAGS := $(OUR_CPPFLAGS) $(CPPFLAGS)

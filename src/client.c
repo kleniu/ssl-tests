@@ -260,27 +260,48 @@ int main(int argc, char* argv[])
         /**************************************************************************************/
         /**************************************************************************************/
         
-        BIO_puts(conn, "GET " HOST_RESOURCE " HTTP/1.1\r\nHost: " HOST_NAME "\r\nConnection: close\r\n\r\n");
-        // BIO_puts(outdata, "\nFetching: " HOST_RESOURCE "\n\n");
-        printf("\nFetching: " HOST_RESOURCE "\n\n");
+        printf("\n### sending data to host [%s]\n", HOST_NAME);
+        char *request = "GET " HOST_RESOURCE " HTTP/1.1\r\nHost: " HOST_NAME "\r\nConnection: close\r\n\r\n";
+        //char *request = "GET " HOST_RESOURCE " HTTP/1.1\r\nHost: " HOST_NAME "\r\n\r\n";
+        printf("=============================== BEGIN =================================\n");
+        printf("%s", request);
+        printf("===============================  END  =================================\n");
+        int data_written = BIO_puts(conn, request);
+        printf("    - bytes of data written [%d]\n", data_written);
+        if( data_written <= 0)
+        {
+            printf("    ERR! BIO_puts");
+        }
+        else
+        {
+            printf("    OK!\n");
+        }
 
+
+        // be aware of chanks https://en.wikipedia.org/wiki/Chunked_transfer_encoding
+        printf("\n### receiving data from host [%s]\n", HOST_NAME);
         int len = 0;
+        printf("=============================== BEGIN =================================\n");
         do {
             // char buff[1536] = {};
             char buff[8192] = {};
+            memset(buff, 0, sizeof(buff));
             
             /* https://www.openssl.org/docs/crypto/BIO_read.html */
             len = BIO_read(conn, buff, sizeof(buff));
             
             if(len > 0)
-                // BIO_write(outdata, buff, len);
-                printf("%s\nlength=%d\n", buff, len);
-            
+            {
+                printf("%s", buff);
+                //printf("\nlength=%d\n",len);
+            }
             /* BIO_should_retry returns TRUE unless there's an  */
             /* error. We expect an error when the server        */
             /* provides the response and closes the connection. */
             
         } while (len > 0 || BIO_should_retry(conn));
+        printf("===============================  END  =================================\n");
+        printf("    OK!\n");
       
     } while(0);
 

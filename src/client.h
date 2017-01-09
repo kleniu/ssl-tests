@@ -34,6 +34,7 @@
 
 #ifndef HOST_NAME
 # define HOST_NAME "www.random.org"
+//# define HOST_NAME "www.google.pl"
 #endif
 
 #ifndef HOST_PORT
@@ -42,6 +43,7 @@
 
 #ifndef HOST_RESOURCE
 # define HOST_RESOURCE "/cgi-bin/randbyte?nbytes=32&format=h"
+//# define HOST_RESOURCE "/"
 #endif
 
 #endif // __CLIENT_H__
