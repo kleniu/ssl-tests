@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <openssl/ssl.h>
-#include <openssl/err.h>
+#include "server.h"
 
 int create_socket(int port)
 {
@@ -79,6 +74,8 @@ void configure_context(SSL_CTX *ctx)
 
 int main(int argc, char **argv)
 {
+    ((void)(argc)); ((void)(argv));
+
     int sock;
     SSL_CTX *ctx;
 
@@ -109,7 +106,7 @@ int main(int argc, char **argv)
             ERR_print_errors_fp(stderr);
         }
         else {
-            SSL_write(ssl, reply, strlen(reply));
+            SSL_write(ssl, reply, (int)strlen(reply));
         }
 
         SSL_free(ssl);

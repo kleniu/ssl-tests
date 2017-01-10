@@ -1,34 +1,37 @@
 # Default rule
-default: client
+default: client server
 
 # Debug or Release
 CONFIG = -g3 -ggdb -O0 -DDEBUG=1
 # CONFIG = -g2 -Os -DNDEBUG=1
 
-OUR_CFLAGS = $(CONFIG) -std=c99 -Wall -Wextra -Wconversion -Wformat -Wformat=2 -Wformat-security -Wno-deprecated-declarations
+OPENSSL_INCDIR = -I/usr/local/opt/openssl/include
+OPENSSL_LIBDIR = -L/usr/local/opt/openssl/lib
+OPENSSL_LIBS = -lssl -lcrypto
 
-# Clear unneeded implicit rules
-.SUFFIXES:
-.SUFFIXES: .c
+CFLAGS = $(CONFIG) $(OPENSSL_INCDIR) -std=c99 -Wall -Wextra -Wconversion -Wformat -Wformat=2 -Wformat-security -Wno-deprecated-declarations
+LDFLAGS = $(OPENSSL_LIBDIR) $(OPENSSL_LIBS)
 
-SOURCES = client.c
-OBJECTS = $(SOURCES:.=.o)
-OUTPUT = client
-CCTLD = cctld.txt
+# link
+#	$^ is the dependency
+#   $@ is the target
+client: client.o
+	cc $^ -o $@ $(LDFLAGS)
 
-# Standard OpenSSL include directory
-OPENSSL_INCLUDE = -I/usr/local/opt/openssl/include
-OPENSSL_LIBDIR = /usr/local/opt/openssl/lib
-OPENSSL_LDFLAGS = -Bstatic $(OPENSSL_LIBDIR)/libssl.a $(OPENSSL_LIBDIR)/libcrypto.a
+# compile
+#	$< is the first element in dependency list
+#   $@ is the target
+client.o: client.c client.h
+	cc $< -o $@ -c $(CFLAGS)
 
-# Merge our flags with user's flags
-override CPPFLAGS := $(OUR_CPPFLAGS) $(CPPFLAGS)
-override CFLAGS := $(OUR_CFLAGS) $(CFLAGS)
-override LDFLAGS := $(OUR_LDFLAGS) $(LDFLAGS) $(OPENSSL_LDFLAGS)
+server: server.o
+	cc $^ -o $@ $(LDFLAGS)
 
-$(OUTPUT): client.h client.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(OPENSSL_INCLUDE) $(SOURCES) -o $(OUTPUT) $(LDFLAGS)
+server.o: server.c server.h
+	cc $< -o $@ -c $(CFLAGS)
 
 .PHONY: clean
 clean:
-	-rm -rf $(OUTPUT) core *.core *.dSYM *.tmp .DS_Store
+	-rm -rf client client.o 
+	-rm -rf server server.o 
+	-rm -rf core *.core *.dSYM *.tmp .DS_Store
